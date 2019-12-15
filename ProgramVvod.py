@@ -95,8 +95,270 @@ for el in htmlSPos.select('td'):
             print((DataPole == Data[:2]) , (TimePole == Time) , (Team1 in Teams , Team2 in Teams))
             if ((DataPole == Data[:2]) and (TimePole == Time) and (Team1 in Teams and Team2 in Teams)):
                 Strect = title[i-1]
+import requests
+import time
+from bs4 import BeautifulSoup as BS
+
+
+def funs(Country,Town,Data,Time,ChekGOROD):
+#Строки ввода значений
+  
+    htmlpogoda = requests.get('https://world-weather.ru/archive/')
+    Pog = BS(htmlpogoda.content,'html.parser')
+    for el in Pog.select('.list-cities'):
+        title = el.select('a')
+
+    i = 0
+    for el in Pog.select('.country-block'):
+        print(title[i].text)
+        if (title[i].text == Country):
+            a = 'https:' + title[i].get('href')  
+        i = i + 1
+    if(Country == 'Англия'):
+        a = 'https://world-weather.ru/archive/united_kingdom/'
+    print(a)    
+    
+    if Data[3] == '0':
+        rData = Data[4:]
+    else:
+        rData = Data[3:]
+    print(rData)    
+    
+    if(rData == '1'):
+        tData = 'Январь'
+    if(rData == '2'):
+        tData = 'Февраль'
+    if(rData == '3'):
+        tData = 'Март'
+    if(rData == '4'):
+        tData = 'Апрель'
+    if(rData == '5'):
+        tData = 'Май'
+    if(rData == '6'):
+        tData = 'Июнь'  
+    if(rData == '7'):
+        tData = 'Июль'
+    if(rData == '8'):
+        tData = 'Август'
+    if(rData == '9'):
+        tData = 'Сентябрь'
+    if(rData == '10'):
+        tData = 'Октябрь'
+    if(rData == '11'):
+        tData = 'Ноябрь'
+    if(rData == '12'):
+        tData = 'Декабрь'  
+        
+    time.sleep(0.5)
+    rTime = Time[:2]
+    if(rTime[0] == 0):
+        rTime = rTime[1:]
+    
+    time.sleep(0.5)    
+    htmlTown = requests.get(a)
+    PogTown = BS(htmlTown.content,'html.parser')
+    if(ChekGOROD == 1):
+        for el in PogTown.select('.list-cities'):
+            title = el.select('a')
+
+        i = 0
+        for el in PogTown.select('a'):
+            try:
+                print(title[i].text)
+                if (title[i].text == Town):
+                    CtructTawn = 'https:' + title[i].get('href') 
+            except:
+                print('---')
+            else:
+                i = i + 1
+    
+        print(CtructTawn)   
+
+    
+
+        time.sleep(0.5)       
+
+        htmlmonths = requests.get(CtructTawn)
+        Pogmonths = BS(htmlmonths.content,'html.parser')
+        for el in Pogmonths.select('.list-months'):
+            title = el.select('a')
+
+        print(title)
+        i = 0
+        for el in Pogmonths.select('a'):
+            try:
+                print(title[i].text)
+                if (title[i].text == tData):
+                    CtructMonths = 'https:' + title[i].get('href')
+            except:
+                print('---')
+            else:
+                i = i + 1 
+         
+        print(CtructMonths)
+  
+        print(rTime)
+        htmltemperatur = requests.get(CtructMonths)
+        Pogtemperatur = BS(htmltemperatur.content,'html.parser')
+        if(int(rTime) < 16):
+            for el in Pogtemperatur.select('.arch-day'):
+                title = el.select('.weather-temperature')
+                print(title)
+                TEMPERATUR = title[0].text
+        else:
+            for el in Pogtemperatur.select('.arch-night'):
+                title = el.select('.weather-temperature')
+                print(title)
+                TEMPERATUR = title[0].text
+    else:
+        for el in PogTown.select('.list-cities'):
+            title = el.select('a')
+
+       
+        
+        print(title[0].text)
+        CtructTawn = 'https:' + title[0].get('href') 
+          
+              
+    
+        print(CtructTawn)   
+
+        time.sleep(0.5)       
+
+        htmlmonths = requests.get(CtructTawn)
+        Pogmonths = BS(htmlmonths.content,'html.parser')
+        for el in Pogmonths.select('.list-months'):
+            title = el.select('a')
+
+        print(title)
+        i = 0
+        for el in Pogmonths.select('a'):
+            try:
+                print(title[i].text)
+                if (title[i].text == tData):
+                    CtructMonths = 'https:' + title[i].get('href')
+            except:
+                print('---')
+            else:
+                i = i + 1 
+         
+        print(CtructMonths)
+  
+        print(rTime)
+        htmltemperatur = requests.get(CtructMonths)
+        Pogtemperatur = BS(htmltemperatur.content,'html.parser')
+        if(int(rTime) < 16):
+            for el in Pogtemperatur.select('.arch-day'):
+                title = el.select('.weather-temperature')
+                print(title)
+                TEMPERATUR = title[0].text
+        else:
+            for el in Pogtemperatur.select('.arch-night'):
+                title = el.select('.weather-temperature')
+                print(title)
+                TEMPERATUR = title[0].text
+    
+    print(title)
+    print(TEMPERATUR)
+    return TEMPERATUR
+#Строки ввода значений
+print("Введите данные матча: ")
+print("1 Команда: ")
+Team1 = input()
+print("2 Команда: ")
+Team2 = input()
+print("Дата: ")
+Data = input()
+print("Время: ")
+Time = input()
+print("Прошёл ли матч: ")
+PROV = input()
+
+
+#Парсинг (город - страна) 
+r = requests.get('https://www.euro-football.ru/team')
+html = BS(r.content,'html.parser')
+time.sleep(0.5)
+for el in html.select('.infoblock'):
+    title = el.select('.infoblock > a')
+    if(title[0].text == Team1):
+       a = title[0].get('href') 
+    if(title[0].text == Team2):
+       b = title[0].get('href')
+       
+rTeam1 = requests.get('https://www.euro-football.ru' + a)
+time.sleep(0.5)
+rTeam2 = requests.get('https://www.euro-football.ru' + b)
+time.sleep(0.5)
+htmlS = BS(rTeam1.content,'html.parser')
+time.sleep(0.5)
+Town1 = ""
+Town2 = ""
+Country1 = ""
+Country2 = ""
+
+for el in htmlS.select('.team-about__info'):
+    title = el.select('p')
+    Town1 =title[0].text
+    Country1 =title[1].text
+time.sleep(0.5)
+htmlD = BS(rTeam2.content,'html.parser')
+time.sleep(0.5)
+for el in htmlD.select('.team-about__info'):
+    title = el.select('p')
+    Town2 =title[0].text
+    Country2 =title[1].text
+time.sleep(0.5)    
+Town1 = Town1[6:]
+Town2 = Town2[6:]
+Country1 = Country1[7:-1]
+Country2 = Country2[7:-1]
+Town1 =str(Town1)
+Town2 = str(Town2)
+Country1 = str(Country1)
+Country2 = str(Country2)
+print(Town1)
+print(Country1)
+print(Town2)
+print(Country2)
+
+time.sleep(0.5)
+
+htmlSPos = BS(rTeam1.content,'html.parser')
+
+for el in htmlSPos.select('.team-schedule__table'):
+   title = el.select('td')
+   
+i = 0    
+Teams = [0, 0]
+for el in htmlSPos.select('td'):   
+    try:
+        if (i % 4 == 0):
+            DataPole =  title[i].text
+            DataPole = DataPole[:2]
+            print(DataPole)
+            TimePole =  title[i].text
+            TimePole = TimePole[-5:]
+            print(TimePole)
+        if (i % 4 == 1):
+            Teams[0] = title[i].text
+            print(Teams[0])
+        if (i % 4 == 3):
+            Teams[1] = title[i].text
+            print(Teams[1])
+    except:
+        print('---')
+    else:
+        if (i % 4 == 3):
+            print(Teams, [Team1, Team2])
+            print((DataPole == Data[:2]) , (TimePole == Time) , (Team1 in Teams , Team2 in Teams))
+            if ((DataPole == Data[:2]) and (TimePole == Time) and (Team1 in Teams and Team2 in Teams)):
+                Strect = title[i-1]
                 Strect = str(Strect)
-                Strect = Strect[72:-14]
+                if(PROV == '1'):
+                    Strect = Strect[100:-14]
+                else:
+                    Strect = Strect[72:-14]
                 print(Strect)
                 time.sleep(0.5)
                 StrectPole = requests.get(Strect)
@@ -115,6 +377,8 @@ for el in htmlSPos.select('td'):
                 print(StranaStadi)
                 ChekCTRANA = 0
                 ChekGOROD = 0
+                CTRANAPOLE = ""
+                GORODPOLE = ""
                 for pole in InfiTawn:
                     if "Страна" in pole.text:
                         j = InfiTawn.index(pole)
@@ -131,10 +395,111 @@ for el in htmlSPos.select('td'):
                     GORODPOLE = StranaStadi[g].text;
                 break
         i = i + 1
+
+TEMPERATUR1 = funs(Country1,Town1,Data,Time,ChekGOROD)
+TEMPERATUR2 = funs(Country2,Town2,Data,Time,ChekGOROD)
+TEMPERATUR3 = funs(CTRANAPOLE,GORODPOLE,Data,Time,ChekGOROD)
+
+print(TEMPERATUR1)
+print(TEMPERATUR2)
+print(TEMPERATUR3)
+
+if(TEMPERATUR1[0] == '-'):
+    TEMPERATUR1_int = int(TEMPERATUR1[1:]) * -1
+else:
+    TEMPERATUR1_int = int(TEMPERATUR1[1:])
+
+if(TEMPERATUR2[0] == '-'):
+    TEMPERATUR2_int = int(TEMPERATUR2[1:]) * -1
+else:
+    TEMPERATUR2_int = int(TEMPERATUR2[1:])
+
+if(TEMPERATUR3[0] == '-'):
+    TEMPERATUR3_int = int(TEMPERATUR3[1:]) * -1
+else:
+    TEMPERATUR3_int = int(TEMPERATUR3[1:])
+    
+print(TEMPERATUR1_int)
+print(TEMPERATUR2_int)
+print(TEMPERATUR3_int)
+
+   
+field = 0.05
+tem_4 = 0.125
+tem_3 = 0.625
+tem_2 = 0.125
+tem_1 = 0.5
+tem_0 = 0.43
+
+WinA = 50
+LoseA = 50
+WinB = 50
+LoseB = 50
+
+if(TEMPERATUR1_int > TEMPERATUR3_int):
+    Raz1 = TEMPERATUR1_int - TEMPERATUR3_int
+if(TEMPERATUR1_int < TEMPERATUR3_int):
+    Raz1 = TEMPERATUR3_int - TEMPERATUR1_int
+if(TEMPERATUR1_int == TEMPERATUR3_int):
+    Raz1 = 0
+if(TEMPERATUR2_int > TEMPERATUR3_int):
+    Raz2 = TEMPERATUR2_int - TEMPERATUR3_int
+if(TEMPERATUR2_int < TEMPERATUR3_int):
+    Raz2 = TEMPERATUR3_int - TEMPERATUR2_int
+if(TEMPERATUR2_int == TEMPERATUR3_int):
+    Raz2 = 0
+
+if(Raz1 > 10):
+    TEMPERATUR1_int = tem_4
+if((Raz1 > 7)and(Raz1 <= 10)):
+    TEMPERATUR1_int = tem_3
+if((Raz1 > 3)and(Raz1 <= 7)):
+    TEMPERATUR1_int = tem_2
+if((Raz1 > 0)and(Raz1 <= 3)):
+    TEMPERATUR1_int = tem_1
+if(Raz1 == 0):
+    TEMPERATUR1_int = tem_0
+
+if(Raz2 > 10):
+    TEMPERATUR2_int = tem_4
+if((Raz2 > 7)and(Raz2 <= 10)):
+    TEMPERATUR2_int = tem_3
+if((Raz2 > 3)and(Raz2 <= 7)):
+    TEMPERATUR2_int = tem_2
+if((Raz2 > 0)and(Raz2 <= 3)):
+    TEMPERATUR2_int = tem_1
+if(Raz2 == 0):
+    TEMPERATUR2_int = tem_0
+    
+if (ChekGOROD == 1):
+    if(Town1 == GORODPOLE):
+        WinA = WinA +(field*tem_0)*100
+        print(WinA)
+    else:
+        LoseA = LoseA + (field * (1 - TEMPERATUR1_int))*100
+        print("!!!" + str(TEMPERATUR1_int))
+        print(100 - LoseA)
+    if(Town2 == GORODPOLE):
+        WinB = WinB +(field*tem_0)*100
+        print(WinB)
+    else:
+        LoseB = LoseB + (field * (1 - TEMPERATUR2_int))*100 
+        print(str(TEMPERATUR2_int)+ "!!!")
+        print(100 - LoseB)
+else:
+    if(Country1 == CTRANAPOLE):
+        WinA = WinA +(field*tem_0)*100
+        print(WinA)
+    else:
+        LoseA = LoseA + (field * (1 - TEMPERATUR1_int))*100
+        print(100 - LoseA)
+    if(Country2 == CTRANAPOLE):
+        WinB = WinB +(field*tem_0)*100
+        print(WinB)
+    else:
+        LoseB = LoseB + (field * (1 - TEMPERATUR2_int))*100 
+        print(100 - LoseB)
         
-
-       
-
 
 
 
