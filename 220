@@ -1,0 +1,82 @@
+#include "pch.h"
+#include <sstream>
+#include <iostream>
+#include <stdio.h>
+#include <string>  
+#include <vector>
+#include <regex> 
+
+using namespace std;
+
+void A_to_a(string &c)
+{
+	for (int i = 0; i < c.length(); i++) {
+		if (c[i] >= 'A' && c[i] <= 'Z')
+			c[i] = c[i] + 'a' - 'A';
+	}
+}
+
+//int number_of_repetitions(string STR1, string STR2) {
+	//int SUM{ 0 };
+	//for(int i = 0; i < STR2.length(); i++){
+		//int p{ 0 };
+		//if(STR2[i] != ' ')
+			//for (int g = 0; g < STR1.length(); g++) {
+				//if (STR1[g] == STR2[i]) {
+					//p++;
+				//	STR1[g] = ' ';
+			//	}
+		//	}
+		//if (p > 0)
+			//SUM++;
+	//}
+	//return SUM;
+//}
+
+int number_of_repetitions(string STR1, string STR2) {
+	int SUM{ 0 };
+	for (int i = 0, g = 0; ((i < STR1.length()) &&( g < STR2.length())); i++, g++) {
+		if (STR1[i] == STR2[g]) {
+			SUM++;
+		}
+	}
+	return SUM;
+}
+
+int main()
+{
+	//regex_replace
+	setlocale(LC_ALL, "Russian");
+	freopen("input.txt", "r", stdin);
+	freopen("output.txt", "w", stdout);
+	string STR, string_number_one, string_number_two;
+	int krov = 1;
+	while (getline(cin,STR)) {
+		
+		regex regular_1("[^a-zA-Z0-9\\s]");
+	
+		string STR2 = regex_replace(STR, regular_1, "");
+		
+		A_to_a(STR2);
+		istringstream STR_chec(STR2);
+		string STR3, rezult;
+		while (STR_chec >> STR3) {
+			if (STR3.length() > 3) {
+				rezult += STR3 + " ";
+			}
+		}
+		if (krov == 1) {
+			string_number_one = rezult;
+			krov++;
+		}
+		else {
+			string_number_two = rezult;
+		}
+	}
+	
+	string_number_one.pop_back();
+	string_number_two.pop_back();
+	double c = number_of_repetitions(string_number_one, string_number_two);
+	cout << c/(string_number_one.length() + string_number_two.length() - c);
+	return 0;
+}
