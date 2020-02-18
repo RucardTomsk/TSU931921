@@ -1,0 +1,43 @@
+#include "pch.h"
+#include "MainFile.cpp" 
+
+int main()
+{
+	setlocale(LC_ALL, "Russian");
+	string sum; 
+	unsigned short num = ~0;
+	
+
+	for (int g = 0, k = 0; g < 8; g++, k++) {
+		for (int i = 0; i < 16; i++) {
+			unsigned short num_2 = 1;
+			num_2 = (num_2 << (15 - i));
+			num_2 = num & num_2;
+			if (((num_2 << i) >> 15) == 1)
+				printf("1");
+			else
+				printf("0");
+		}
+		num = num & ~(1 << (15 - k) | (1 << k));
+		cout << endl;
+	}
+	
+	for (int g = 0, k = 7; g < 8; g++,k--) {
+		num = num | (1 << (15 - k) | (1 << k));
+		for (int i = 0; i < 16; i++) {
+			unsigned short num_2 = 1;
+			num_2 = (num_2 << (15 - i));
+			num_2 = num & num_2;
+			if (((num_2 << i) >> 15) == 1)
+				printf("1");
+			else
+				printf("0");
+		}
+		cout << endl;
+	}
+
+	
+
+	_getch();
+	return 0;
+}
